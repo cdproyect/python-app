@@ -1,2 +1,9 @@
 # python-app
 Host a Phython app for testing
+
+## Requirements
+
+- Python > 3.10
+- Docker/Rancher installed
+- kind (https://kind.sigs.k8s.io/)
+- Docker Hub account for creating a registry
