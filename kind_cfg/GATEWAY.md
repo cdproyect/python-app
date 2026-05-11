@@ -21,6 +21,25 @@ Install
     kubectl apply -f svc-gateway.yaml
     ```
 
+## Set up HTTPS
+
+This is just for a lab environment
+
+### 1. Generate self-signed certificate
+
+```sh
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout tls.key -out tls.crt \
+  -subj "/CN=*.test.com"
+```
+### 2. Create the secret in istio-system
+
+```sh
+kubectl create secret tls gateway-tls \
+  --cert=tls.crt \
+  --key=tls.key \
+  -n istio-system
+```
 
 # References
 
