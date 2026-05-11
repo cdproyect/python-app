@@ -24,6 +24,11 @@ spec:
     hostname: "*.test.com"
     port: 443
     protocol: HTTPS
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: gateway-tls
+        kind: Secret
     allowedRoutes:
       namespaces:
         from: All
