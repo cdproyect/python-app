@@ -1,0 +1,56 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: gateway
+  namespace: istio-system
+  annotations:
+    networking.istio.io/service-type: "NodePort"
+spec:
+  # infrastructure:
+  #   parameterRef:
+  #     group: ""
+  #     kind: ConfigMap
+  #     name: gateway-config
+  gatewayClassName: istio
+  listeners:
+  - name: http
+    hostname: "*.test.com"
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: All
+  - name: https
+    hostname: "*.test.com"
+    port: 443
+    protocol: HTTPS
+    tls:
+      mode: Terminate
+      certificateRefs:
+      - name: gateway-tls
+        kind: Secret
+    allowedRoutes:
+      namespaces:
+        from: All
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: http
+  namespace: default
+spec:
+  parentRefs:
+  - name: gateway
+    namespace: istio-system
+  hostnames: ["python-app.test.com"]
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: "/"
+    backendRefs:
+    - name: python-app
+      namespace: default
+      port: 8080
+
+

@@ -1,3 +1,7 @@
 .venv/
 __pycache__/
 *.pyc
+
+## TLS
+**tls.key
+**tls.crt

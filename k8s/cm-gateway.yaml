@@ -1,0 +1,13 @@
+# apiVersion: v1
+# kind: ConfigMap
+# metadata:
+#   name: gateway-config
+#   namespace: istio-system
+# data:
+#   service: |
+#     spec:
+#       ports:
+#       - port: 80
+#         NodePort: 30080
+#       - port: 443
+#         NodePort: 30443
