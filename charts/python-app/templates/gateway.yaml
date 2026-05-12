@@ -25,7 +25,7 @@ spec:
   gatewayClassName: {{ .Values.gateway.className | default "istio" }}
   listeners:
   - name: http
-    hostname: {{ .Values.gateway.hotnamePattern | quote }}
+    hostname: {{ .Values.gateway.hostnamePattern | quote }}
     port: 80
     protocol: HTTP
     allowedRoutes:
@@ -33,7 +33,7 @@ spec:
         from: All
   {{- if .Values.gateway.nodePort.https }}
   - name: https
-    hostname: {{ .Values.gateway.hotnamePattern | quote }}
+    hostname: {{ .Values.gateway.hostnamePattern | quote }}
     port: 443
     protocol: HTTPS
     tls:
