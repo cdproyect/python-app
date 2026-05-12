@@ -1,0 +1,40 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "gateway.labels" . | nindent 4 }}
+  annotations:
+    {{- if eq .Values.serviceType "NodePort" }}
+    networking.istio.io/service-type: NodePort
+    {{- else if eq .Values.serviceType "LoadBalancer" }}
+    networking.istio.io/service-type: LoadBalancer
+    {{- end }}
+    {{- with .Values.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  gatewayClassName: {{ .Values.className }}
+  listeners:
+  - name: http
+    hostname: {{ .Values.hostnamePattern | quote }}
+    port: 80
+    protocol: HTTP
+    allowedRoutes:
+      namespaces:
+        from: All
+  {{- if .Values.https.enabled }}
+  - name: https
+    hostname: {{ .Values.hostnamePattern | quote }}
+    port: 443
+    protocol: HTTPS
+    tls:
+      mode: Terminate
+      certificateRefs:
+        - name: {{ .Values.https.tlsSecretName }}
+          kind: Secret
+    allowedRoutes:
+      namespaces:
+        from: All
+  {{- end }}

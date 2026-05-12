@@ -171,36 +171,3 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-# Istio Gateway configuration
-# for more information: https://gateway-api.sigs.k8s.io/
-
-gateway:
-  enabled: true
-  name: gateway
-  namespace: istio-system
-  # SErvice type for the gateway, e.g. LoadBalancer, NodePort, ClusterIP
-  # Use "NodePort" for local clusters (KIND, Minikube) and "LoadBalancer" for cloud environments
-  serviceType: NodePort
-  # NodePort configuration for KIND clusters
-  # Creates a service override with fiexed NodePorts matching KIND port mappings
-  nodePort:
-    # Enable NodePort service override for KIND clusters
-    enabled: true
-    # Nodeport for HTTP traffic (port 80)
-    http: 30080
-    # Nodeport for HTTPS traffic (port 443)
-    https: 30443
-    # NodePort for Istio status port (port 15021)
-    status: 32751
-  # Additional annotations (merged with ServiceType annotations, e.g. for NodePort or LoadBalancer) 
-  annotations: {}
-  className: istio
-  # Hostname pattern for the gateway listeners
-  hostnamePattern: "*.test.com"
-  # HTTPS configuration
-  https:
-    enabled: true
-    # TLS secret name for HTTPS (must be created separately)
-    # Create with: kubectl create secret tls gateway-tls --cert=tls.crt --key=tls.key -n istio-system
-    tlsSecretName: gateway-tls
