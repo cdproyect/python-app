@@ -5,4 +5,4 @@ Follow instructions [here](https://github.com/argoproj/argo-helm/tree/main/chart
 ```sh
 helm repo add argo https://argoproj.github.io/argo-helm
 helm repo update
-helm upgrade --install argo-cd argo/argo-cd -n argocd --create-namespace -f ./charts/argocd/values-argo.yaml
+helm upgrade --install argo-cd argo/argo-cd -n argocd --create-namespace -f ./charts/argocd/values.yaml
