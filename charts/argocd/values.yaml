@@ -20,7 +20,7 @@ server:
   ingressGrpc:
     enabled: false
   # Gateway API HTTPRoute config
-  httpRoute:
+  httproute:
     enabled: true
     annotations: {}
     parentRefs:
