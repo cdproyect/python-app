@@ -26,4 +26,4 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           push: true
-          tags: cdproyect/python-app:latest:${{ env.COMMIT_ID }}
+          tags: cdproyect/python-app:${{ env.COMMIT_ID }}
