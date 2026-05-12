@@ -40,8 +40,8 @@ jobs:
       - name: Install argocd
         shell: bash
         run: |
-          curl -ksSL -o argocd https://argo-cd-argocd-server.argocd/download/argocd-linux-amd64
-          chmod +x argocd
+          sudo curl -ksSL -o argocd argo-cd-argocd-server.argocd/download/argocd-linux-amd64
+          sudo chmod +x argocd
           sudo mv ./argocd /usr/local/bin/argocd
       - name: Argocd app sync
         shell: bash
