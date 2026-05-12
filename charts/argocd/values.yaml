@@ -8,6 +8,7 @@ server:
   # Run server without TLS -TLS  termination will be handled by the Istio Gateway
   extraArgs:
     - --insecure
+  replicas: 2
 # Service configuration
 service:
   # Type of the Argo CD Server service
@@ -33,9 +34,6 @@ redis:
 
 controller:
   replicas: 1
-
-server:
-  replicas: 2
 
 repoServer:
   replicas: 2
