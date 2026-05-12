@@ -24,13 +24,24 @@ serviceAccount:
   # Specifies whether a service account should be created.
   create: true
   # Automatically mount a ServiceAccount's API credentials?
-  automount: true
+  # Set to false if the app doesn't need K8s API access (security recommendation)
+  automount: false
   # Annotations to add to the service account.
+  # Use for cloud worload identity
   annotations: {}
+  # GKE: iam.gke.io/gcp-service-account: "<service-account>"
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template.
   name: ""
-
+  # RBAC configuration fo the service account
+  rbac: 
+    # Create Role and Rolebinding for the service account
+    create: false
+    # Rules to apply (only used if rbac.create is true)
+    rules: []
+      # - apiGroups: [""]
+      #   resources: ["pods"]
+      #   verbs: ["get", "watch", "list"]
 # This is for setting Kubernetes Annotations to a Pod.
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
 podAnnotations: {}
@@ -54,7 +65,8 @@ service:
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: ClusterIP
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-  port: 5001
+  port: 8080
+  targetPort: 5001
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
@@ -78,23 +90,23 @@ ingress:
 # (see: https://gateway-api.sigs.k8s.io/guides/)
 httpRoute:
   # HTTPRoute enabled.
-  enabled: false
+  enabled: true
   # HTTPRoute annotations.
   annotations: {}
   # Which Gateways this Route is attached to.
   parentRefs:
   - name: gateway
-    sectionName: http
     # namespace: default
+    namespace: istio-system
   # Hostnames matching HTTP header.
   hostnames:
-  - chart-example.local
+  - python-app.test.com
   # List of rules and filters applied.
   rules:
   - matches:
     - path:
         type: PathPrefix
-        value: /headers
+        value: /
   #   filters:
   #   - type: RequestHeaderModifier
   #     requestHeaderModifier:
@@ -126,11 +138,11 @@ resources: {}
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
   httpGet:
-    path: /
+    path: /api/v1/healthz
     port: http
 readinessProbe:
   httpGet:
-    path: /
+    path: /api/v1/healthz
     port: http
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
@@ -160,35 +172,35 @@ tolerations: []
 
 affinity: {}
 
+# Istio Gateway configuration
+# for more information: https://gateway-api.sigs.k8s.io/
+
 gateway:
   enabled: true
   name: gateway
   namespace: istio-system
-  annotations:
-    networking.istio.io/service-type: "NodePort"
+  # SErvice type for the gateway, e.g. LoadBalancer, NodePort, ClusterIP
+  # Use "NodePort" for local clusters (KIND, Minikube) and "LoadBalancer" for cloud environments
+  serviceType: NodePort
+  # NodePort configuration for KIND clusters
+  # Creates a service override with fiexed NodePorts matching KIND port mappings
+  nodePort:
+    # Enable NodePort service override for KIND clusters
+    enabled: true
+    # Nodeport for HTTP traffic (port 80)
+    http: 30080
+    # Nodeport for HTTPS traffic (port 443)
+    https: 30443
+    # NodePort for Istio status port (port 15021)
+    status: 32751
+  # Additional annotations (merged with ServiceType annotations, e.g. for NodePort or LoadBalancer) 
+  annotations: {}
   className: istio
-  # infrastructure:
-  #   parameterRef:
-  #     group: ""
-  #     kind: ConfigMap
-  #     name: gateway-config
-  listeners:
-    - name: http
-      hostname: "*.test.com"
-      port: 80
-      protocol: HTTP
-      allowedRoutes:
-        namespaces:
-          from: All
-    - name: https
-      hostname: "*.test.com"
-      port: 443
-      protocol: HTTPS
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: gateway-tls
-            kind: Secret
-      allowedRoutes:
-        namespaces:
-          from: All
+  # Hostname pattern for the gateway listeners
+  hostnamePattern: "*.test.com"
+  # HTTPS configuration
+  https:
+    enabled: true
+    # TLS secret name for HTTPS (must be created separately)
+    # Create with: kubectl create secret tls gateway-tls --cert=tls.crt --key=tls.key -n istio-system
+    tlsSecretName: gateway-tls
