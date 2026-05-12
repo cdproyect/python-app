@@ -1,6 +1,9 @@
 # Gateway name
 name: gateway
 
+# Gateway class name
+className: istio
+
 # Gateway namespace
 namespace: istio-system
 
