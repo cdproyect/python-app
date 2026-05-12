@@ -1,0 +1,12 @@
+apiVersion: v2
+name: gateway
+description: Istio Gateway API chart for Kubernetes clusters
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+keyworkds:
+  - gateway
+  - istio
+  - gateway-api
+  - ingress
+

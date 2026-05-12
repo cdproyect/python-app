@@ -5,3 +5,6 @@ __pycache__/
 ## TLS
 **tls.key
 **tls.crt
+
+## Helm
+charts/*.tgz

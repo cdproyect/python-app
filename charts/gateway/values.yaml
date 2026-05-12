@@ -1,0 +1,39 @@
+# Gateway name
+name: gateway
+
+# Gateway class name
+className: istio
+
+# Gateway namespace
+namespace: istio-system
+
+# Service type for the gateway
+# Use "NodePort" for local clusters
+# Use "LoadBalancer" for cloud environments
+serviceType: NodePort
+
+# Hostname pattern for the gateway listeners
+hostnamePattern: "*.test.com"
+
+# Additional gateway annotations
+annotations: {}
+
+# NodePort configuration for KIND clusters
+# Creates a service override with fixed NodePorts matching KIND port mappings
+nodePort:
+  # Enable NodePort service override for KIND clusters
+  enabled: true
+  # Nodeport for HTTP traffic (port 80)
+  http: 30080
+  # Nodeport for HTTPS traffic (port 443)
+  https: 30443
+  # NodePort for Istio status port (port 15021)
+  status: 32751
+
+# HTTPS configuration
+https:
+  # Enable HTTPS listener on the gateway
+  enabled: true 
+  # TLS secret name for HTTPS listener (must be created separately)
+  # Create with: kubectl create secret tls gateway-tls --cert=tls.crt --key=tls.key -n istio-system
+  tlsSecretName: gateway-tls

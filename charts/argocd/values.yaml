@@ -1,0 +1,56 @@
+## Global settings
+global:
+  # Domain for Argo CD - must
+  domain: argocd.test.com
+
+## Argo CD Server configuration
+server:
+  # Run server without TLS -TLS  termination will be handled by the Istio Gateway
+  extraArgs:
+    - --insecure
+  replicas: 2
+# Service configuration
+  service:
+    # Type of the Argo CD Server service
+    type: ClusterIP
+  # Disable default ingress
+  ingress:
+    enabled: false
+  # Disable default ingressGrpc
+  ingressGrpc:
+    enabled: false
+  # Gateway API HTTPRoute config
+  httproute:
+    enabled: true
+    annotations: {}
+    parentRefs:
+      - name: gateway
+        namespace: istio-system
+    hostnames:
+      - argocd.test.com
+
+redis:
+  enabled: true
+
+controller:
+  replicas: 1
+
+repoServer:
+  replicas: 2
+
+applicationSet:
+  replicas: 2
+
+# Configs
+configs:
+  # Argo CD configuration
+  cm:
+    # URL for Argo CD
+    url: https://argocd.test.com
+    # Disable TLS verification for Argo CD CLI and API
+    server.insecure: "true"
+  # Argo CD parameters
+  params:
+    # Disable TLS for Argo CD CLI and API
+    server.insecure: "true"
+
