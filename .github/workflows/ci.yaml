@@ -8,7 +8,7 @@ on:
       - main
 
 jobs:
-  docker:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - name: Shorten commit id
@@ -27,3 +27,29 @@ jobs:
         with:
           push: true
           tags: cdproyect/python-app:${{ env.COMMIT_ID }}
+    outputs:
+      commit_id: ${{ env.COMMIT_ID }}
+  
+  cd:
+    needs: ci
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Install argocd
+        shell: bash
+        run: |
+          curl -ksSL -o argocd https://argo-cd-argocd-server.argocd/download/argocd-linux-amd64
+          chmod +x argocd
+          sudo mv ./argocd /usr/local/bin/argocd
+      - name: Argocd app sync
+        shell: bash
+        run: |
+          argocd login argo-cd-argocd-server.argocd \
+            --insecure \
+            --grpc-web \
+            --username admin \
+            --password ${{ secrets.ARGOCD_PASSWORD }} \
+          argocd app sync python-app 
+
