@@ -11,3 +11,7 @@ Host a Phython app for testing
 - helm
 - kind (https://kind.sigs.k8s.io/)
 - Docker Hub account for creating a registry
+
+## TODO
+
+Create a Dockerfile for the github runner with Python installed
