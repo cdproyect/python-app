@@ -6,6 +6,8 @@ on:
       - src/**
     branches:
       - main
+permissions:
+  contents: write  # Add this to allow pushing commits
 
 jobs:
   ci:
