@@ -8,3 +8,7 @@ __pycache__/
 
 ## Helm
 charts/*.tgz
+
+## personal notes
+
+personalnotes.md
