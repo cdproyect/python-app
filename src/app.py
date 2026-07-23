@@ -1,3 +1,8 @@
+"""Flask Application Module.
+
+This module initializes and runs the Flask Web application.
+"""
+
 from flask import Flask, jsonify  # type: ignore[reportMissingImports]
 import datetime
 import socket
